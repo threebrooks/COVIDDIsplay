@@ -8,6 +8,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 import population_data as pd
+import subprocess
 
 def majorSort(e):
   return deathsData[e][-1]
@@ -17,6 +18,7 @@ while(True):
     os.system("cd covid-19-data; git pull; cd ..")
   else:
     os.system("git clone https://github.com/nytimes/covid-19-data")
+  data_date = subprocess.check_output(['sh', '-c', 'cd covid-19-data; git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S; cd ..']).decode("UTF-8")
 
   with open("covid-19-data/us-states.csv") as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
@@ -55,6 +57,6 @@ while(True):
     confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
     deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
   
-  al.showData(confirmedData, deathsData, majors)
+  al.showData(confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
    
