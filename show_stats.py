@@ -7,6 +7,7 @@ import re
 import os
 import time
 import matplotlib.pyplot as plt
+import population_data as pd
 
 def majorSort(e):
   return deathsData[e][-1]
@@ -44,14 +45,15 @@ while(True):
   sortedMajors = list(deathsData.keys())
   sortedMajors.sort(reverse=True, key=majorSort)
   majors = []
-  
+
+  homeState = "Massachusetts"
   for idx in range(len(sortedMajors)):
-    if (idx < 3 or sortedMajors[idx] == "US" or sortedMajors[idx] == "Germany" or sortedMajors[idx] == "Massachusetts"):
+    if (idx < 3 or sortedMajors[idx] == homeState):
       majors.append(sortedMajors[idx])
   
   for major in majors:
-    confirmedData[major] = [100.0*x/al.population[major] for x in confirmedData[major]]
-    deathsData[major] = [100.0*x/al.population[major] for x in deathsData[major]]
+    confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
+    deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
   
   al.showData(confirmedData, deathsData, majors)
   time.sleep(60*60)

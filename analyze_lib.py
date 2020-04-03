@@ -41,25 +41,6 @@ def getSlopeData(hashData, applyLog, dayDist):
 
   return (slopeData)
 
-population = {
-  "New York":  19E6,
-  "New Jersey":  8.9E6,
-  "Michigan":  8.9E6,
-  "Louisiana": 4.6E6,
-  "Washington": 7.54E6,
-  "Massachusetts": 6.9E6,
-  "California": 39E6,
-  "Florida": 21E6,
-
-  "Italy": 60E6,
-  "Spain": 46E6,
-  "US": 327E6,
-  "France": 67E6,
-  "China": 1386E6,
-  "Germany": 83E6,
-}
-
-
 def showData(confirmedData, deathsData, majors):  
   fig, axs = plt.subplots(2, 2)
 
