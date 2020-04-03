@@ -54,6 +54,6 @@ while(True):
     deathsData[major] = [x/al.population[major] for x in deathsData[major]]
   
   al.showData(confirmedData, deathsData, majors)
-  time.sleep(10)
+  time.sleep(60*60)
   plt.close()
    
