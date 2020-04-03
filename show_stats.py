@@ -55,5 +55,4 @@ while(True):
   
   al.showData(confirmedData, deathsData, majors)
   time.sleep(60*60)
-  plt.close()
    

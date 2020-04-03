@@ -77,7 +77,6 @@ def showData(confirmedData, deathsData, majors):
 
   for major in majors:
     smoothPlot(axs[1][0], range(max_length-len(deathsData[major]), max_length), deathsData[major], major, True)
-  axs[1][0].legend(loc='best')
   axs[1][0].set_title("Log total deaths")
   
   deathsDailyData = getSlopeData(deathsData, False, 1)
@@ -87,5 +86,4 @@ def showData(confirmedData, deathsData, majors):
 
   mng = plt.get_current_fig_manager()
   mng.resize(*mng.window.maxsize())
-  plt.show(block=False)
-  plt.pause(0.001)
+  plt.savefig("stats.png")
