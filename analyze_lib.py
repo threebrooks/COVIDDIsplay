@@ -3,6 +3,7 @@ import math
 from scipy.interpolate import spline
 from scipy.ndimage.filters import gaussian_filter1d
 import matplotlib.pyplot as plt
+import datetime
 
 def safeLog(a):
   if (a == 0):
@@ -84,5 +85,8 @@ def showData(confirmedData, deathsData, majors):
     smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, False)
   axs[1][1].set_title("Daily deaths")
 
+  plt.suptitle(str(datetime.datetime.now()))
+
   fig.tight_layout(pad=1.0)
+  plt.subplots_adjust(top=0.85)
   plt.savefig("stats.png")
