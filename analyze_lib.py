@@ -84,6 +84,5 @@ def showData(confirmedData, deathsData, majors):
     smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, False)
   axs[1][1].set_title("Daily deaths")
 
-  mng = plt.get_current_fig_manager()
-  mng.resize(*mng.window.maxsize())
+  fig.tight_layout(pad=1.0)
   plt.savefig("stats.png")
