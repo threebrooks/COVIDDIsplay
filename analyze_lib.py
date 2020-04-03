@@ -4,6 +4,7 @@ from scipy.interpolate import spline
 from scipy.ndimage.filters import gaussian_filter1d
 import matplotlib.pyplot as plt
 import datetime
+import matplotlib.ticker as mticker
 
 def safeLog(a):
   if (a == 0):
@@ -70,6 +71,7 @@ def showData(confirmedData, deathsData, majors):
     smoothPlot(axs[0][0], range(max_length-len(confirmedData[major]), max_length), confirmedData[major], major, True)
   axs[0][0].legend(loc='best')
   axs[0][0].set_title("Log total confirmed")
+  axs[0][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
   
   confirmedDailyData = getSlopeData(confirmedData, False, 1)
   for major in majors:
@@ -79,14 +81,16 @@ def showData(confirmedData, deathsData, majors):
   for major in majors:
     smoothPlot(axs[1][0], range(max_length-len(deathsData[major]), max_length), deathsData[major], major, True)
   axs[1][0].set_title("Log total deaths")
+  axs[1][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
   
   deathsDailyData = getSlopeData(deathsData, False, 1)
   for major in majors:
     smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, False)
   axs[1][1].set_title("Daily deaths")
 
-  plt.suptitle(str(datetime.datetime.now()))
+  plt.suptitle("COVID-19 stats, % of population, "+str(datetime.datetime.now()))
 
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
   plt.savefig("stats.png")
+  print("Image saved.")

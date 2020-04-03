@@ -50,8 +50,8 @@ while(True):
       majors.append(sortedMajors[idx])
   
   for major in majors:
-    confirmedData[major] = [x/al.population[major] for x in confirmedData[major]]
-    deathsData[major] = [x/al.population[major] for x in deathsData[major]]
+    confirmedData[major] = [100.0*x/al.population[major] for x in confirmedData[major]]
+    deathsData[major] = [100.0*x/al.population[major] for x in deathsData[major]]
   
   al.showData(confirmedData, deathsData, majors)
   time.sleep(60*60)
