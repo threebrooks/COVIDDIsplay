@@ -115,10 +115,17 @@ while(True):
     sortedMajors = [k for (k, v) in sortedMajors]
     majors = []
   
-    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden"]
+    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US"]
+    totalNumDisplayed = 5
+    numMandatory = 0
+    for man in mandatory:
+      numMandatory += sortedMajors.count(man)
     for idx in range(len(sortedMajors)):
-      if (idx < 3 or sortedMajors[idx] in mandatory):
+      if ((sortedMajors[idx] not in mandatory) and (len(majors) < (totalNumDisplayed-numMandatory))):
         majors.append(sortedMajors[idx])
+    for man in mandatory:
+      if (sortedMajors.count(man) > 0):
+        majors.append(man)
     
     for major in majors:
       confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]

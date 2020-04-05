@@ -1,3 +1,6 @@
+# !/usr/bin/python
+# coding=utf-8
+
 population_data = {
   "California": 39937489,
   "Texas": 29472295,
