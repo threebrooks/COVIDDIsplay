@@ -105,7 +105,6 @@ while(True):
     else:
       (confirmedData, deathsData) = loadCSSE()
   
-    print(str(deathsData))
     trimDays = 31
     for major in confirmedData.keys():
       confirmedData[major] = confirmedData[major][-trimDays:]

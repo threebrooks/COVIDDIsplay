@@ -74,4 +74,5 @@ def showData(outFname, confirmedData, deathsData, majors, data_date):
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
   plt.savefig(outFname)
+  plt.close()
   print("Image saved.")
