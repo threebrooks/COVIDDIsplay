@@ -98,7 +98,7 @@ while(True):
       os.system("cd "+gitDir+"; git pull; cd ..")
     else:
       os.system("git clone "+gitRepo)
-    data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S; cd ..']).decode("UTF-8")
+    data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
     if (StateCountry):
       (confirmedData, deathsData) = loadNYT()
@@ -135,6 +135,6 @@ while(True):
       outFname = "US.png"
     else:
       outFname = "World.png"
-    al.showData(outFname, confirmedData, deathsData, majors, data_date)
+    al.showData(StateCountry, outFname, confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
    

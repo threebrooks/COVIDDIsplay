@@ -41,7 +41,7 @@ def getSlopeData(hashData, applyLog, dayDist):
 
   return (slopeData)
 
-def showData(outFname, confirmedData, deathsData, majors, data_date):  
+def showData(StateCountry, outFname, confirmedData, deathsData, majors, data_date):  
   fig, axs = plt.subplots(2, 2)
 
   max_length = 0
@@ -69,7 +69,11 @@ def showData(outFname, confirmedData, deathsData, majors, data_date):
     smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, False)
   axs[1][1].set_title("Daily deaths")
 
-  plt.suptitle("COVID-19 stats, % of population, date:"+data_date)
+  if (StateCountry):
+    stateCountryString = "US"
+  else:
+    stateCountryString = "World"
+  plt.suptitle(stateCountryString+" COVID-19 stats, % of population, Date:"+data_date)
 
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
