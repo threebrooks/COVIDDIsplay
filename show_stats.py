@@ -11,15 +11,9 @@ import population_data as pd
 import subprocess
 
 def majorSort(e):
-  return deathsData[e][-1]
+  return e[1][-1]
 
-while(True):
-  if (os.path.isdir("covid-19-data")):
-    os.system("cd covid-19-data; git pull; cd ..")
-  else:
-    os.system("git clone https://github.com/nytimes/covid-19-data")
-  data_date = subprocess.check_output(['sh', '-c', 'cd covid-19-data; git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S; cd ..']).decode("UTF-8")
-
+def loadNYT():
   with open("covid-19-data/us-states.csv") as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
     lineData = list(csvreader)
@@ -43,20 +37,98 @@ while(True):
       except :
         print(str(sys.exc_info()[0]))
         sys.exit(-1)
-  
-  sortedMajors = list(deathsData.keys())
-  sortedMajors.sort(reverse=True, key=majorSort)
-  majors = []
+  return (confirmedData, deathsData)
 
-  homeState = "Massachusetts"
-  for idx in range(len(sortedMajors)):
-    if (idx < 3 or sortedMajors[idx] == homeState):
-      majors.append(sortedMajors[idx])
+def loadCSSE():
+  for mode in ["confirmed", "deaths"]:
+    with open("COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"+mode+"_global.csv") as csvfile:
+      csvreader = csv.reader(csvfile, delimiter=',')
+      lineData = list(csvreader)
+      hashData = {}
+      major_col = -1
+      first_date_col = -1
+     
+      for rowIdx in range(len(lineData)):
+        if (rowIdx == 0):
+          for idx in range(len(lineData[0])):
+            column = lineData[0][idx]
+            if (re.match(".*country.*", column, flags=re.IGNORECASE)):
+              major_col = idx
+            elif (first_date_col == -1 and re.match(".*[0-9]+\/[0-9]+\/[0-9]+.*", column, flags=re.IGNORECASE)):
+              first_date_col = idx
+          continue
+        if (major_col == -1 or first_date_col == -1):
+          print("Couldn't find all columns!")
+          sys.exit(-1)
+        row = lineData[rowIdx]
+        major = row[major_col] 
+        if (major not in hashData):
+          hashData[major] = [0]*(len(row)-first_date_col)
+        try:
+          for colIdx in range(first_date_col, len(row)):
+            el = row[colIdx]
+            if (el == ""):
+              el = "0"
+            elif (int(el) < 0):
+              el = str(hashData[major][colIdx-first_date_col-1])
+            hashData[major][colIdx-first_date_col] += int(el)
+        except:
+          print(str(row))
+          sys.exit(-1)
+    if (mode == "confirmed"):
+      confirmedData = hashData
+    else:
+      deathsData = hashData
+    
+  return (confirmedData, deathsData)
+
+
+while(True):
+  for StateCountry in [False, True]:
+    if (StateCountry):
+      print("Running US data")
+      gitRepo = "https://github.com/nytimes/covid-19-data"
+      gitDir = "covid-19-data"
+    else:
+      print("Running World data")
+      gitRepo = "https://github.com/CSSEGISandData/COVID-19"
+      gitDir = "COVID-19"
   
-  for major in majors:
-    confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
-    deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
+    if (os.path.isdir(gitDir)):
+      os.system("cd "+gitDir+"; git pull; cd ..")
+    else:
+      os.system("git clone "+gitRepo)
+    data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} +%Y/%m/%d_%H:%M:%S; cd ..']).decode("UTF-8")
   
-  al.showData(confirmedData, deathsData, majors, data_date)
+    if (StateCountry):
+      (confirmedData, deathsData) = loadNYT()
+    else:
+      (confirmedData, deathsData) = loadCSSE()
+  
+    print(str(deathsData))
+    trimDays = 31
+    for major in confirmedData.keys():
+      confirmedData[major] = confirmedData[major][-trimDays:]
+      deathsData[major] = deathsData[major][-trimDays:]
+  
+    sortedMajors = [(k, v) for k, v in deathsData.items()]
+    sortedMajors.sort(reverse=True, key=majorSort)
+    sortedMajors = [k for (k, v) in sortedMajors]
+    majors = []
+  
+    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden"]
+    for idx in range(len(sortedMajors)):
+      if (idx < 3 or sortedMajors[idx] in mandatory):
+        majors.append(sortedMajors[idx])
+    
+    for major in majors:
+      confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
+      deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
+   
+    if (StateCountry):
+      outFname = "US.png"
+    else:
+      outFname = "World.png"
+    al.showData(outFname, confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
    

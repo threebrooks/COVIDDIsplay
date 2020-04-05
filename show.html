@@ -1,6 +1,40 @@
+<html> 
 <meta http-equiv="refresh" content="60">
+<head> 
+<style>
+img{
+      display:block; 
+      width:100%; 
+      height:auto;
+}
+button{
+      display:block; 
+      width:100%; 
+      height:50%;
+      background-color: #008CBA;
+      font-size : 50px;
+}
+</style>
+<script> 
+function changeImage(fname)
+{
+  var img = document.getElementById("image");
+  img.src=fname;
+  return false;
+}
+</script>
+</head>
+
 <body>
-  <center>
-  <img src="stats.png" height="100%"/>
-  </center>
+  <table style="height:100%;width:100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0;" border="1">
+    <tr>
+      <td style="display:block;height:100%;width:100%"><center><img id="image" src="US.png"/></center></td>
+      <td width="10%">
+        <button id="clickme" onclick="changeImage('US.png');">US</button><br/>
+        <button id="clickme" onclick="changeImage('World.png');">World</button>
+      </td>
+    </tr>
+  </table>
 </body>
+</html>
+
