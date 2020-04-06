@@ -116,7 +116,7 @@ while(True):
     majors = []
   
     mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US"]
-    totalNumDisplayed = 5
+    totalNumDisplayed = 6
     numMandatory = 0
     for man in mandatory:
       numMandatory += sortedMajors.count(man)
