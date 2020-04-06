@@ -16,22 +16,35 @@ button{
 }
 </style>
 <script> 
-function changeImage(fname)
+if (sessionStorage.getItem('USWorld') == null) {
+  sessionStorage.setItem('USWorld', "US.png")
+  console.log("Initialized USWorld to US")
+} else {
+  console.log("Initialization: USWorld is "+sessionStorage.getItem('USWorld'))
+}
+
+function setImage(USWorld) {
+  sessionStorage.setItem('USWorld', USWorld)
+  console.log("Set USWorld to "+USWorld)
+}
+
+function showImage()
 {
+  console.log("showImage: USWorld is "+sessionStorage.getItem('USWorld'))
   var img = document.getElementById("image");
-  img.src=fname;
-  return false;
+  img.src=sessionStorage.getItem('USWorld');
+  console.log("img.src is "+img.src)
 }
 </script>
 </head>
 
-<body>
+<body onload="javascript:showImage()">
   <table style="height:100%;width:100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
     <tr>
       <td style="display:block;height:100%;width:100%"><center><img id="image" src="US.png"/></center></td>
       <td width="10%">
-        <button id="clickme" onclick="changeImage('US.png');">US</button><br/>
-        <button id="clickme" onclick="changeImage('World.png');">World</button>
+        <button id="clickme" onclick="setImage('US.png'); showImage();">US</button><br/>
+        <button id="clickme" onclick="setImage('World.png'); showImage();">World</button>
       </td>
     </tr>
   </table>
