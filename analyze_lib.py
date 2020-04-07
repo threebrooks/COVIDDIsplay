@@ -13,7 +13,7 @@ def safeLog(a):
     return math.log(a)
 
 def smoothPlot(ax, x, y, major, log):
-  ysmoothed = gaussian_filter1d(y, sigma=1)
+  ysmoothed = gaussian_filter1d(y, sigma=2)
   if (log):
     ax.set_yscale("log")
   ax.plot(x, ysmoothed, label=major)
