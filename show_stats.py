@@ -145,7 +145,7 @@ while(True):
     sortedMajors = [k for (k, v) in sortedMajors]
     majors = []
   
-    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US"]
+    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US", "Middlesex"]
     totalNumDisplayed = 6
     numMandatory = 0
     for man in mandatory:
