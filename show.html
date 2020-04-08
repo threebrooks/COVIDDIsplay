@@ -10,29 +10,29 @@ img{
 button{
       display:block; 
       width:100%; 
-      height:45%;
+      height:33%;
       background-color: #008CBA;
       font-size : 50px;
 }
 </style>
 <script> 
-if (sessionStorage.getItem('USWorld') == null) {
-  sessionStorage.setItem('USWorld', "US.png")
-  console.log("Initialized USWorld to US")
+if (sessionStorage.getItem('CSC') == null) {
+  sessionStorage.setItem('CSC', "US.png")
+  console.log("Initialized CSC to US")
 } else {
-  console.log("Initialization: USWorld is "+sessionStorage.getItem('USWorld'))
+  console.log("Initialization: CSC is "+sessionStorage.getItem('CSC'))
 }
 
-function setImage(USWorld) {
-  sessionStorage.setItem('USWorld', USWorld)
-  console.log("Set USWorld to "+USWorld)
+function setImage(CSC) {
+  sessionStorage.setItem('CSC', CSC)
+  console.log("Set CSC to "+CSC)
 }
 
 function showImage()
 {
-  console.log("showImage: USWorld is "+sessionStorage.getItem('USWorld'))
+  console.log("showImage: CSC is "+sessionStorage.getItem('CSC'))
   var img = document.getElementById("image");
-  img.src=sessionStorage.getItem('USWorld');
+  img.src=sessionStorage.getItem('CSC');
   console.log("img.src is "+img.src)
 }
 </script>
@@ -43,8 +43,9 @@ function showImage()
     <tr>
       <td style="display:block;height:100%;width:100%"><center><img id="image" src="US.png"/></center></td>
       <td width="10%">
-        <button id="clickme" onclick="setImage('US.png'); showImage();">US</button><br/>
         <button id="clickme" onclick="setImage('World.png'); showImage();">World</button>
+        <button id="clickme" onclick="setImage('US.png'); showImage();">US</button>
+        <button id="clickme" onclick="setImage('MA.png'); showImage();">MA</button>
       </td>
     </tr>
   </table>

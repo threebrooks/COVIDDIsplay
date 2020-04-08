@@ -293,5 +293,20 @@ population_data = {
   "Falkland Islands": 3480,
   "Niue": 1626,
   "Tokelau": 1357,
-  "Holy See": 801
+  "Holy See": 801,
+
+  "Middlesex": 1614714,
+  "Worcester": 830839,
+  "Suffolk": 807252,
+  "Essex": 790638,
+  "Norfolk": 705388,
+  "Bristol": 564022,
+  "Plymouth": 518132,
+  "Hampden": 470406,
+  "Barnstable": 213413,
+  "Hampshire": 161355,
+  "Berkshire": 126348,
+  "Franklin": 70963,
+  "Dukes": 17352,
+  "Nantucket": 11327,
 }

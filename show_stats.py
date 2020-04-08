@@ -13,7 +13,7 @@ import subprocess
 def majorSort(e):
   return e[1][-1]
 
-def loadNYT():
+def loadNYTUS():
   with open("covid-19-data/us-states.csv") as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
     lineData = list(csvreader)
@@ -39,7 +39,35 @@ def loadNYT():
         sys.exit(-1)
   return (confirmedData, deathsData)
 
-def loadCSSE():
+def loadNYTMA():
+  with open("covid-19-data/us-counties.csv") as csvfile:
+    csvreader = csv.reader(csvfile, delimiter=',')
+    lineData = list(csvreader)
+    major_col = 1
+    confirmed_col = 4
+    deaths_col = 5
+   
+    confirmedData = {}
+    deathsData = {}
+    for rowIdx in range(len(lineData)):
+      if (rowIdx == 0):
+        continue
+      row = lineData[rowIdx]
+      if (row[2] != "Massachusetts"):
+        continue
+      major = row[major_col] 
+      if (major not in confirmedData):
+        confirmedData[major] = []
+        deathsData[major] = []
+      try:
+        confirmedData[major].append(int(row[confirmed_col]))
+        deathsData[major].append(int(row[deaths_col]))
+      except :
+        print(str(sys.exc_info()[0]))
+        sys.exit(-1)
+  return (confirmedData, deathsData)
+
+def loadCSSEWorld():
   for mode in ["confirmed", "deaths"]:
     with open("COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"+mode+"_global.csv") as csvfile:
       csvreader = csv.reader(csvfile, delimiter=',')
@@ -84,13 +112,13 @@ def loadCSSE():
 
 
 while(True):
-  for StateCountry in [False, True]:
-    if (StateCountry):
-      print("Running US data")
+  for CSC in ["World", "US", "MA"]:
+    if (CSC == "US" or CSC == "MA"):
+      print("Pulling NYT data")
       gitRepo = "https://github.com/nytimes/covid-19-data"
       gitDir = "covid-19-data"
     else:
-      print("Running World data")
+      print("Pulling CSSE data")
       gitRepo = "https://github.com/CSSEGISandData/COVID-19"
       gitDir = "COVID-19"
   
@@ -100,10 +128,12 @@ while(True):
       os.system("git clone "+gitRepo)
     data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
-    if (StateCountry):
-      (confirmedData, deathsData) = loadNYT()
+    if (CSC == "World"):
+      (confirmedData, deathsData) = loadCSSEWorld()
+    elif (CSC == "US"):
+      (confirmedData, deathsData) = loadNYTUS()
     else:
-      (confirmedData, deathsData) = loadCSSE()
+      (confirmedData, deathsData) = loadNYTMA()
   
     trimDays = 31
     for major in confirmedData.keys():
@@ -131,10 +161,6 @@ while(True):
       confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
       deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
    
-    if (StateCountry):
-      outFname = "US.png"
-    else:
-      outFname = "World.png"
-    al.showData(StateCountry, outFname, confirmedData, deathsData, majors, data_date)
+    al.showData(CSC, confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
    
