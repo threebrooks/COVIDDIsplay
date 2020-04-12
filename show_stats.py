@@ -110,6 +110,21 @@ def loadCSSEWorld():
     
   return (confirmedData, deathsData)
 
+def getPopulation(country, CSC):
+  if (CSC == "World"):
+    minPop = 1E6
+  elif (CSC == "US"):
+    minPop = 1E6
+  else:
+    minPop = 1
+  if country in pd.population_data:
+    if (pd.population_data[country] < minPop):
+      return 1E20
+    else:
+      return pd.population_data[country] 
+  else:
+    #print("Making up population of"+country)
+    return 1E20
 
 while(True):
   for CSC in ["World", "US", "MA"]:
@@ -135,6 +150,10 @@ while(True):
     else:
       (confirmedData, deathsData) = loadNYTMA()
   
+    for major in confirmedData.keys():
+      confirmedData[major] = [100.0*x/getPopulation(major, CSC) for x in confirmedData[major]]
+      deathsData[major] = [100.0*x/getPopulation(major, CSC) for x in deathsData[major]]
+
     trimDays = 31
     for major in confirmedData.keys():
       confirmedData[major] = confirmedData[major][-trimDays:]
@@ -157,10 +176,7 @@ while(True):
       if (sortedMajors.count(man) > 0):
         majors.append(man)
     
-    for major in majors:
-      confirmedData[major] = [100.0*x/pd.population_data[major] for x in confirmedData[major]]
-      deathsData[major] = [100.0*x/pd.population_data[major] for x in deathsData[major]]
-   
+  
     al.showData(CSC, confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
    
