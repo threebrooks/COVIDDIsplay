@@ -163,19 +163,15 @@ while(True):
     sortedMajors.sort(reverse=True, key=majorSort)
     sortedMajors = [k for (k, v) in sortedMajors]
     majors = []
-  
-    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US", "Middlesex"]
+
+    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US", "Middlesex", "Suffolk"]
     totalNumDisplayed = 6
-    numMandatory = 0
     for man in mandatory:
-      numMandatory += sortedMajors.count(man)
-    for idx in range(len(sortedMajors)):
-      if ((sortedMajors[idx] not in mandatory) and (len(majors) < (totalNumDisplayed-numMandatory))):
-        majors.append(sortedMajors[idx])
-    for man in mandatory:
-      if (sortedMajors.count(man) > 0):
+      if (man in sortedMajors):
         majors.append(man)
-    
+    for idx in range(len(sortedMajors)):
+      if ((sortedMajors[idx] not in majors) and (len(majors) < totalNumDisplayed)):
+        majors.append(sortedMajors[idx])
   
     al.showData(CSC, confirmedData, deathsData, majors, data_date)
   time.sleep(60*60)
