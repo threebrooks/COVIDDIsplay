@@ -73,6 +73,6 @@ def showData(CSC, confirmedData, deathsData, majors, data_date):
 
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
-  plt.savefig(CSC+".png")
+  plt.savefig("/var/www/html/"+CSC+".png")
   plt.close()
   print("Image saved.")

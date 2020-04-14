@@ -9,6 +9,7 @@ import time
 import matplotlib.pyplot as plt
 import population_data as pd
 import subprocess
+import shutil
 
 def majorSort(e):
   return e[1][-1]
@@ -126,6 +127,10 @@ def getPopulation(country, CSC):
     #print("Making up population of"+country)
     return 1E20
 
+if (os.geteuid() != 0):
+  print("Not sudo")
+  sys.exit(-1)
+
 while(True):
   for CSC in ["World", "US", "MA"]:
     if (CSC == "US" or CSC == "MA"):
@@ -174,5 +179,6 @@ while(True):
         majors.append(sortedMajors[idx])
   
     al.showData(CSC, confirmedData, deathsData, majors, data_date)
+  shutil.copyfile("show.html", "/var/www/html/index.html") 
   time.sleep(60*60)
    
