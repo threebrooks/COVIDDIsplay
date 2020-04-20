@@ -14,7 +14,7 @@ def safeLog(a):
     return math.log(a)
 
 def smoothPlot(ax, x, y, major, should_label, log):
-  ysmoothed = gaussian_filter1d(y, sigma=2)
+  ysmoothed = gaussian_filter1d(y, sigma=1.5)
   if (log):
     ax.set_yscale("log")
   if (should_label):
