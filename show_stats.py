@@ -167,18 +167,25 @@ while(True):
     sortedMajors = [(k, v) for k, v in deathsData.items()]
     sortedMajors.sort(reverse=True, key=majorSort)
     sortedMajors = [k for (k, v) in sortedMajors]
-    majors = []
 
-    mandatory = ["Massachusetts", "Germany", "Norway", "Sweden", "US", "Middlesex", "Suffolk"]
-    totalNumDisplayed = 6
+    mandatory = ["Massachusetts", "Germany", "US", "Middlesex", "Suffolk"]
+    totalLabeled = 6
+    totalShown = 2*totalLabeled
+    labeled_majors = []
+    shown_majors = []
     for man in mandatory:
       if (man in sortedMajors):
-        majors.append(man)
+        labeled_majors.append(man)
+        shown_majors.append(man)
     for idx in range(len(sortedMajors)):
-      if ((sortedMajors[idx] not in majors) and (len(majors) < totalNumDisplayed)):
-        majors.append(sortedMajors[idx])
+      if ((sortedMajors[idx] not in labeled_majors) and (len(labeled_majors) < totalLabeled)):
+        labeled_majors.append(sortedMajors[idx])
+      if ((sortedMajors[idx] not in shown_majors) and (len(shown_majors) < totalShown)):
+        shown_majors.append(sortedMajors[idx])
+    labeled_majors.reverse()
+    shown_majors.reverse()
   
-    al.showData(CSC, confirmedData, deathsData, majors, data_date)
+    al.showData(CSC, confirmedData, deathsData, shown_majors, labeled_majors, data_date)
   shutil.copyfile("show.html", "/var/www/html/index.html") 
   time.sleep(60*60)
    
