@@ -45,7 +45,7 @@ def getSlopeData(hashData, applyLog, dayDist):
 
   return (slopeData)
 
-def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date):  
+def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
   fig, axs = plt.subplots(2, 2)
 
   max_length = 0
@@ -77,6 +77,6 @@ def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date):
 
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
-  plt.savefig("/var/www/html/"+CSC+".png")
+  plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
   plt.close()
   print("Image saved.")

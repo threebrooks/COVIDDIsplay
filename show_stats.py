@@ -10,6 +10,15 @@ import matplotlib.pyplot as plt
 import population_data as pd
 import subprocess
 import shutil
+from lxml import etree
+import glob
+
+def replaceImgTags(date):
+  with open("show.html") as fp:
+    allLines = fp.read()
+    allLines = re.sub("\.png","_"+date+".png", allLines)
+  with open("/var/www/html/index.html","wb") as fp:
+    fp.write(str.encode(allLines))
 
 def majorSort(e):
   return e[1][-1]
@@ -132,6 +141,9 @@ if (os.geteuid() != 0):
   sys.exit(-1)
 
 while(True):
+  for f in glob.glob("/var/www/html/*.png"):
+    os.unlink(f)
+
   for CSC in ["World", "US", "MA"]:
     if (CSC == "US" or CSC == "MA"):
       print("Pulling NYT data")
@@ -146,6 +158,7 @@ while(True):
       os.system("cd "+gitDir+"; git pull; cd ..")
     else:
       os.system("git clone "+gitRepo)
+    data_secs = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at"; cd ..']).decode("UTF-8").rstrip()
     data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
     if (CSC == "World"):
@@ -185,7 +198,7 @@ while(True):
     labeled_majors.reverse()
     shown_majors.reverse()
   
-    al.showData(CSC, confirmedData, deathsData, shown_majors, labeled_majors, data_date)
-  shutil.copyfile("show.html", "/var/www/html/index.html") 
+    al.showData(CSC, confirmedData, deathsData, shown_majors, labeled_majors, data_date, data_secs)
+  replaceImgTags(data_secs)
   time.sleep(60*60)
    
