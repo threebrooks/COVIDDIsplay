@@ -108,7 +108,8 @@ def loadCSSEWorld():
             if (el == ""):
               el = "0"
             elif (int(el) < 0):
-              el = str(hashData[major][colIdx-first_date_col-1])
+              el = str(row[colIdx-1])
+
             hashData[major][colIdx-first_date_col] += int(el)
         except:
           print(str(row))
