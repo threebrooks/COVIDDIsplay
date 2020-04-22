@@ -144,6 +144,8 @@ while(True):
   for f in glob.glob("/var/www/html/*.png"):
     os.unlink(f)
 
+  data_secs = str(time.time())
+
   for CSC in ["World", "US", "MA"]:
     if (CSC == "US" or CSC == "MA"):
       print("Pulling NYT data")
@@ -158,7 +160,6 @@ while(True):
       os.system("cd "+gitDir+"; git pull; cd ..")
     else:
       os.system("git clone "+gitRepo)
-    data_secs = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at"; cd ..']).decode("UTF-8").rstrip()
     data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
     if (CSC == "World"):
