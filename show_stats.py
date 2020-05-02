@@ -83,7 +83,7 @@ def loadNYTMA():
 
 def loadMADashboard():
   d = datetime.date.today()
-  os.system('wget https://www.mass.gov/doc/covid-19-raw-data-'+calendar.month_name[d.month].lower()+'-'+str(d.day)+'-2020/download') 
+  os.system('wget https://www.mass.gov/doc/covid-19-raw-data-'+calendar.month_name[d.month].lower()+'-'+str(d.day)+'-2020/download -O download') 
   os.system("unzip -o - download \"DateofDeath.csv\"")
   with open("DateofDeath.csv") as fp: 
     csvreader = csv.reader(fp, delimiter=',')
@@ -185,7 +185,7 @@ while(True):
     else:
       os.system("git clone "+gitRepo)
     if (CSC == "MA"):
-      data_date = time.ctime(os.path.getctime("download"))
+      data_date = time.ctime(os.path.getmtime("download"))
     else:
       data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
