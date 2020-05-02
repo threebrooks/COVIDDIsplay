@@ -12,6 +12,10 @@ import subprocess
 import shutil
 from lxml import etree
 import glob
+import urllib.request
+import copy
+import calendar
+import datetime
 
 def replaceImgTags(date):
   with open("show.html") as fp:
@@ -76,6 +80,25 @@ def loadNYTMA():
         print(str(sys.exc_info()[0]))
         sys.exit(-1)
   return (confirmedData, deathsData)
+
+def loadMADashboard():
+  d = datetime.date.today()
+  os.system('wget https://www.mass.gov/doc/covid-19-raw-data-'+calendar.month_name[d.month].lower()+'-'+str(d.day)+'-2020/download') 
+  os.system("unzip -o - download \"DateofDeath.csv\"")
+  with open("DateofDeath.csv") as fp: 
+    csvreader = csv.reader(fp, delimiter=',')
+    lineData = list(csvreader)
+  hashData = {}
+  hashData["Massachusetts"] = []
+     
+  for rowIdx in range(len(lineData)):
+    if (rowIdx == 0):
+      continue
+    row = lineData[rowIdx]
+    hashData["Massachusetts"].append(int(row[2]))
+  #os.remove("download")
+  os.remove("DateofDeath.csv")
+  return (hashData, copy.deepcopy(hashData))
 
 def loadCSSEWorld():
   for mode in ["confirmed", "deaths"]:
@@ -161,18 +184,23 @@ while(True):
       os.system("cd "+gitDir+"; git pull; cd ..")
     else:
       os.system("git clone "+gitRepo)
-    data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
+    if (CSC == "MA"):
+      data_date = time.ctime(os.path.getctime("download"))
+    else:
+      data_date = subprocess.check_output(['sh', '-c', 'cd '+gitDir+'; git log -1 --format="%at" | xargs -I{} date -d @{} "+%m/%d %H:%M"; cd ..']).decode("UTF-8")
   
     if (CSC == "World"):
       (confirmedData, deathsData) = loadCSSEWorld()
     elif (CSC == "US"):
       (confirmedData, deathsData) = loadNYTUS()
     else:
-      (confirmedData, deathsData) = loadNYTMA()
-  
-    for major in confirmedData.keys():
-      confirmedData[major] = [100.0*x/getPopulation(major, CSC) for x in confirmedData[major]]
-      deathsData[major] = [100.0*x/getPopulation(major, CSC) for x in deathsData[major]]
+      (confirmedData, deathsData) = loadMADashboard()
+      #(confirmedData, deathsData) = loadNYTMA()
+
+    if (CSC != "MA"):
+      for major in confirmedData.keys():
+        confirmedData[major] = [100.0*x/getPopulation(major, CSC) for x in confirmedData[major]]
+        deathsData[major] = [100.0*x/getPopulation(major, CSC) for x in deathsData[major]]
 
     trimDays = 31
     for major in confirmedData.keys():
@@ -199,8 +227,11 @@ while(True):
         shown_majors.append(sortedMajors[idx])
     labeled_majors.reverse()
     shown_majors.reverse()
-  
-    al.showData(CSC, confirmedData, deathsData, shown_majors, labeled_majors, data_date, data_secs)
+     
+    if (CSC == "MA"):
+      al.showSingleData(CSC, deathsData, shown_majors, labeled_majors, data_date, data_secs)
+    else:
+      al.showData(CSC, confirmedData, deathsData, shown_majors, labeled_majors, data_date, data_secs)
   replaceImgTags(data_secs)
   time.sleep(60*60)
    

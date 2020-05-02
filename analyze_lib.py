@@ -45,6 +45,28 @@ def getSlopeData(hashData, applyLog, dayDist):
 
   return (slopeData)
 
+def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs):  
+  fig, axs = plt.subplots(1, 1)
+
+  max_length = 0
+  for major in majors:
+    max_length = max(max_length, len(deathsData[major]))
+ 
+  deathsDailyData = getSlopeData(deathsData, False, 1)
+  for major in majors:
+    smoothPlot(axs, range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledMajors, False)
+  axs.set_title("Daily deaths")
+
+  plt.suptitle(CSC+" COVID-19 stats, Date:"+data_date)
+
+  fig.tight_layout(pad=1.0)
+  plt.grid()
+  plt.subplots_adjust(top=0.85)
+  plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
+  plt.close()
+  print("Image saved.")
+
+
 def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
   fig, axs = plt.subplots(2, 2)
 
