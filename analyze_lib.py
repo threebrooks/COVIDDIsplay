@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import datetime
 import matplotlib.ticker as mticker
 import copy
+import numpy as np
 
 def safeLog(a):
   if (a == 0):
@@ -53,8 +54,13 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
     max_length = max(max_length, len(deathsData[major]))
  
   deathsDailyData = getSlopeData(deathsData, False, 1)
+  max_val = 0
+  for major in majors:
+    max_val = max(max_val, np.max(deathsDailyData[major]))
   for major in majors:
     smoothPlot(axs, range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledMajors, False)
+  print(str(max_val))
+  axs.set_ylim(0, max_val)
   axs.set_title("Daily deaths")
 
   plt.suptitle(CSC+" COVID-19 stats, Date:"+data_date)
