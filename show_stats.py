@@ -83,7 +83,8 @@ def loadNYTMA():
 
 def loadMADashboard():
   d = datetime.date.today()
-  os.system('wget https://www.mass.gov/doc/covid-19-raw-data-'+calendar.month_name[d.month].lower()+'-'+str(d.day)+'-2020/download -O download') 
+  if (os.system('wget https://www.mass.gov/doc/covid-19-raw-data-'+calendar.month_name[d.month].lower()+'-'+str(d.day)+'-2020/download -O download.tmp') == 0):
+    os.system("mv download.tmp download")
   os.system("unzip -o - download \"DateofDeath.csv\"")
   with open("DateofDeath.csv") as fp: 
     csvreader = csv.reader(fp, delimiter=',')
