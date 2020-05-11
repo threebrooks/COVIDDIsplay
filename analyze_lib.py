@@ -58,7 +58,7 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
     max_length = max(max_length, len(deathsData[major]))
 
   base = datetime.datetime.today()
-  date_list = [base - datetime.timedelta(days=-x) for x in range(max_length-1)]
+  date_list = [base - datetime.timedelta(days=max_length-x) for x in range(max_length-1)]
  
   deathsDailyData = getSlopeData(deathsData, False, 1)
   max_val = 0
