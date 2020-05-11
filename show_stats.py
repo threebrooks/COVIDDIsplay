@@ -202,7 +202,7 @@ while(True):
       for major in confirmedData.keys():
         confirmedData[major] = [100.0*x/getPopulation(major, CSC) for x in confirmedData[major]]
         deathsData[major] = [100.0*x/getPopulation(major, CSC) for x in deathsData[major]]
-      trimDays = 31
+      trimDays = 62
     else:
       trimDays = 10000
 

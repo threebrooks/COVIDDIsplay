@@ -2,11 +2,13 @@ import sys
 import math
 from scipy.interpolate import spline
 from scipy.ndimage.filters import gaussian_filter1d
+import matplotlib
 import matplotlib.pyplot as plt
 import datetime
 import matplotlib.ticker as mticker
 import copy
 import numpy as np
+import matplotlib.dates as mdates
 
 def safeLog(a):
   if (a == 0):
@@ -49,23 +51,32 @@ def getSlopeData(hashData, applyLog, dayDist):
 def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs):  
   fig, axs = plt.subplots(1, 1)
 
+  print(str(matplotlib.__version__))
+
   max_length = 0
   for major in majors:
     max_length = max(max_length, len(deathsData[major]))
+
+  base = datetime.datetime.today()
+  date_list = [base - datetime.timedelta(days=-x) for x in range(max_length-1)]
  
   deathsDailyData = getSlopeData(deathsData, False, 1)
   max_val = 0
   for major in majors:
     max_val = max(max_val, np.max(deathsDailyData[major]))
   for major in majors:
-    smoothPlot(axs, range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledMajors, False)
-  print(str(max_val))
+    smoothPlot(axs, date_list, deathsDailyData[major], major, major in labeledMajors, False)
+  locator = mdates.AutoDateLocator()
+  formatter = mdates.AutoDateFormatter(locator)
+  axs.xaxis.set_major_locator(locator)
+  axs.xaxis.set_major_formatter(formatter)
   axs.set_ylim(0, max_val)
   axs.set_title("Daily deaths")
 
   plt.suptitle(CSC+" COVID-19 stats, Date:"+data_date)
 
   fig.tight_layout(pad=1.0)
+  fig.autofmt_xdate()
   plt.grid()
   plt.subplots_adjust(top=0.85)
   plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
