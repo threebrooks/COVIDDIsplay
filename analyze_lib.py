@@ -97,7 +97,7 @@ def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, d
   axs[0][0].set_title("Log total confirmed")
   axs[0][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
   
-  confirmedDailyData = getSlopeData(confirmedData, False, 1)
+  confirmedDailyData = getSlopeData(confirmedData, False, 7)
   for major in majors:
     smoothPlot(axs[0][1], range(max_length-len(confirmedDailyData[major]), max_length), confirmedDailyData[major], major, major in labeledMajors, False)
   axs[0][1].set_title("Daily confirmed")
@@ -107,7 +107,7 @@ def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, d
   axs[1][0].set_title("Log total deaths")
   axs[1][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
   
-  deathsDailyData = getSlopeData(deathsData, False, 1)
+  deathsDailyData = getSlopeData(deathsData, False, 7)
   for major in majors:
     smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledMajors, False)
   axs[1][1].set_title("Daily deaths")
