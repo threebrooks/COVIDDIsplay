@@ -16,9 +16,11 @@ def safeLog(a):
   else:
     return math.log(a)
 
-def smoothPlot(ax, x, y, major, should_label, log):
+def smoothPlot(ax, x, y, major, should_label, logX, logY):
   ysmoothed = gaussian_filter1d(y, sigma=1.5)
-  if (log):
+  if (logX):
+    ax.set_xscale("log")
+  if (logY):
     ax.set_yscale("log")
   if (should_label):
     ax.plot(x, ysmoothed, label=major)
@@ -39,9 +41,9 @@ def getSlopeData(hashData, applyLog, dayDist):
   slopeData = {}
   for key in logData:
     slopeData[key] = []
-    for idx in range(1, len(logData[key])):
+    for idx in range(0, len(logData[key])):
       slope = 0
-      for idx2 in range(1, dayDist+1):
+      for idx2 in range(0, dayDist+1):
         if ((idx-idx2 >= 0) and (logData[key][idx-idx2] > -1E5)):
           slope = logData[key][idx]-logData[key][idx-idx2]
       slopeData[key].append(slope)
@@ -58,14 +60,14 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
     max_length = max(max_length, len(deathsData[major]))
 
   base = datetime.datetime.today()
-  date_list = [base - datetime.timedelta(days=max_length-x) for x in range(max_length-1)]
+  date_list = [base - datetime.timedelta(days=max_length-x) for x in range(max_length)]
  
   deathsDailyData = getSlopeData(deathsData, False, 1)
   max_val = 0
   for major in majors:
     max_val = max(max_val, np.max(deathsDailyData[major]))
   for major in majors:
-    smoothPlot(axs, date_list, deathsDailyData[major], major, major in labeledMajors, False)
+    smoothPlot(axs, date_list, deathsDailyData[major], major, major in labeledMajors, False, False)
   locator = mdates.AutoDateLocator()
   formatter = mdates.AutoDateFormatter(locator)
   axs.xaxis.set_major_locator(locator)
@@ -85,6 +87,30 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
 
 
 def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
+  fig, axs = plt.subplots(1, 2)
+
+  max_length = 0
+  for major in majors:
+    max_length = max(max_length, max(len(confirmedData[major]), len(deathsData[major])))
+ 
+  confirmedDailyData = getSlopeData(confirmedData, False, 7)
+  for major in majors:
+    smoothPlot(axs[0], confirmedData[major], confirmedDailyData[major], major, major in labeledMajors, True, True)
+  axs[0].set_title("Confirmed")
+  axs[0].legend(loc='best')
+
+  deathsDailyData = getSlopeData(deathsData, False, 7)
+  for major in majors:
+    smoothPlot(axs[1], deathsData[major], deathsDailyData[major], major, major in labeledMajors, True, True)
+  axs[1].set_title("Deaths")
+
+  fig.tight_layout(pad=1.0)
+  plt.subplots_adjust(top=0.85)
+  plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
+  plt.close()
+  print("Image saved.")
+
+def showDataOld(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
   fig, axs = plt.subplots(2, 2)
 
   max_length = 0
