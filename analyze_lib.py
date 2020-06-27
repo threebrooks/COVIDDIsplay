@@ -50,13 +50,38 @@ def getSlopeData(hashData, applyLog, dayDist):
 
   return (slopeData)
 
-def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs):  
+def majorSort(e):
+  return e[1][-1]
+
+def getLabeledShown(data):
+  sortedMajors = [(k, v) for k, v in data.items()]
+  sortedMajors.sort(reverse=True, key=majorSort)
+  sortedMajors = [k for (k, v) in sortedMajors]
+
+  mandatory = ["Massachusetts", "Germany", "US", "Middlesex", "Suffolk"]
+  totalLabeled = 6
+  totalShown = 2*totalLabeled
+  labeled_majors = []
+  shown_majors = []
+  for man in mandatory:
+    if (man in sortedMajors):
+      labeled_majors.append(man)
+      shown_majors.append(man)
+  for idx in range(len(sortedMajors)):
+    if ((sortedMajors[idx] not in labeled_majors) and (len(labeled_majors) < totalLabeled)):
+      labeled_majors.append(sortedMajors[idx])
+    if ((sortedMajors[idx] not in shown_majors) and (len(shown_majors) < totalShown)):
+      shown_majors.append(sortedMajors[idx])
+  labeled_majors.reverse()
+  shown_majors.reverse()
+  return (labeled_majors, shown_majors)
+ 
+def showSingleData(CSC, deathsData, data_date, data_secs):  
+  (labeledMajors, shownMajors) = getLabeledShown(deathsData)
   fig, axs = plt.subplots(1, 1)
 
-  print(str(matplotlib.__version__))
-
   max_length = 0
-  for major in majors:
+  for major in shownMajors:
     max_length = max(max_length, len(deathsData[major]))
 
   base = datetime.datetime.today()
@@ -64,9 +89,9 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
  
   deathsDailyData = getSlopeData(deathsData, False, 1)
   max_val = 0
-  for major in majors:
+  for major in shownMajors:
     max_val = max(max_val, np.max(deathsDailyData[major]))
-  for major in majors:
+  for major in shownMajors:
     smoothPlot(axs, date_list, deathsDailyData[major], major, major in labeledMajors, False, False)
   locator = mdates.AutoDateLocator()
   formatter = mdates.AutoDateFormatter(locator)
@@ -86,62 +111,31 @@ def showSingleData(CSC, deathsData, majors, labeledMajors, data_date, data_secs)
   print("Image saved.")
 
 
-def showData(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
+def showData(CSC, confirmedData, deathsData, data_date, data_secs):  
+  (labeledConfirmedMajors, shownConfirmedMajors) = getLabeledShown(confirmedData)
   fig, axs = plt.subplots(1, 2)
 
   max_length = 0
-  for major in majors:
+  for major in shownConfirmedMajors:
     max_length = max(max_length, max(len(confirmedData[major]), len(deathsData[major])))
  
   confirmedDailyData = getSlopeData(confirmedData, False, 7)
-  for major in majors:
-    smoothPlot(axs[0], confirmedData[major], confirmedDailyData[major], major, major in labeledMajors, True, True)
+  for major in shownConfirmedMajors:
+    smoothPlot(axs[0], confirmedData[major], confirmedDailyData[major], major, major in labeledConfirmedMajors, True, True)
   axs[0].set_title("Confirmed")
   axs[0].legend(loc='best')
 
+  (labeledDeathsMajors, shownDeathsMajors) = getLabeledShown(deathsData)
   deathsDailyData = getSlopeData(deathsData, False, 7)
-  for major in majors:
-    smoothPlot(axs[1], deathsData[major], deathsDailyData[major], major, major in labeledMajors, True, True)
+  for major in shownDeathsMajors:
+    smoothPlot(axs[1], deathsData[major], deathsDailyData[major], major, major in labeledDeathsMajors, True, True)
   axs[1].set_title("Deaths")
+  axs[1].legend(loc='best')
 
   fig.tight_layout(pad=1.0)
   plt.subplots_adjust(top=0.85)
+  plt.suptitle(CSC+" COVID-19 stats, Date:"+data_date)
   plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
   plt.close()
   print("Image saved.")
 
-def showDataOld(CSC, confirmedData, deathsData, majors, labeledMajors, data_date, data_secs):  
-  fig, axs = plt.subplots(2, 2)
-
-  max_length = 0
-  for major in majors:
-    max_length = max(max_length, max(len(confirmedData[major]), len(deathsData[major])))
- 
-  for major in majors:
-    smoothPlot(axs[0][0], range(max_length-len(confirmedData[major]), max_length), confirmedData[major], major, major in labeledMajors, True)
-  axs[0][0].legend(loc='best')
-  axs[0][0].set_title("Log total confirmed")
-  axs[0][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
-  
-  confirmedDailyData = getSlopeData(confirmedData, False, 7)
-  for major in majors:
-    smoothPlot(axs[0][1], range(max_length-len(confirmedDailyData[major]), max_length), confirmedDailyData[major], major, major in labeledMajors, False)
-  axs[0][1].set_title("Daily confirmed")
-
-  for major in majors:
-    smoothPlot(axs[1][0], range(max_length-len(deathsData[major]), max_length), deathsData[major], major, major in labeledMajors, True)
-  axs[1][0].set_title("Log total deaths")
-  axs[1][0].yaxis.set_major_formatter(mticker.ScalarFormatter())
-  
-  deathsDailyData = getSlopeData(deathsData, False, 7)
-  for major in majors:
-    smoothPlot(axs[1][1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledMajors, False)
-  axs[1][1].set_title("Daily deaths")
-
-  plt.suptitle(CSC+" COVID-19 stats, % of population, Date:"+data_date)
-
-  fig.tight_layout(pad=1.0)
-  plt.subplots_adjust(top=0.85)
-  plt.savefig("/var/www/html/"+CSC+"_"+data_secs+".png")
-  plt.close()
-  print("Image saved.")
