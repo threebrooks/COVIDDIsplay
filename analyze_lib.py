@@ -59,7 +59,7 @@ def getLabeledShown(data):
   sortedMajors = [k for (k, v) in sortedMajors]
 
   mandatory = ["Massachusetts", "Germany", "US", "Middlesex", "Suffolk"]
-  totalLabeled = 6
+  totalLabeled = 7
   totalShown = 2*totalLabeled
   labeled_majors = []
   shown_majors = []
@@ -77,7 +77,8 @@ def getLabeledShown(data):
   return (labeled_majors, shown_majors)
  
 def showSingleData(CSC, deathsData, data_date, data_secs):  
-  (labeledMajors, shownMajors) = getLabeledShown(deathsData)
+  deathsDailyData = getSlopeData(deathsData, False, 1)
+  (labeledMajors, shownMajors) = getLabeledShown(deathsDailyData)
   fig, axs = plt.subplots(1, 1)
 
   max_length = 0
@@ -87,7 +88,6 @@ def showSingleData(CSC, deathsData, data_date, data_secs):
   base = datetime.datetime.today()
   date_list = [base - datetime.timedelta(days=max_length-x) for x in range(max_length)]
  
-  deathsDailyData = getSlopeData(deathsData, False, 1)
   max_val = 0
   for major in shownMajors:
     max_val = max(max_val, np.max(deathsDailyData[major]))
@@ -112,21 +112,21 @@ def showSingleData(CSC, deathsData, data_date, data_secs):
 
 
 def showData(CSC, confirmedData, deathsData, data_date, data_secs):  
-  (labeledConfirmedMajors, shownConfirmedMajors) = getLabeledShown(confirmedData)
+  confirmedDailyData = getSlopeData(confirmedData, False, 7)
+  (labeledConfirmedMajors, shownConfirmedMajors) = getLabeledShown(confirmedDailyData)
   fig, axs = plt.subplots(1, 2)
 
   max_length = 0
   for major in shownConfirmedMajors:
     max_length = max(max_length, max(len(confirmedData[major]), len(deathsData[major])))
  
-  confirmedDailyData = getSlopeData(confirmedData, False, 7)
   for major in shownConfirmedMajors:
     smoothPlot(axs[0], confirmedData[major], confirmedDailyData[major], major, major in labeledConfirmedMajors, True, True)
   axs[0].set_title("Confirmed")
   axs[0].legend(loc='best')
 
-  (labeledDeathsMajors, shownDeathsMajors) = getLabeledShown(deathsData)
   deathsDailyData = getSlopeData(deathsData, False, 7)
+  (labeledDeathsMajors, shownDeathsMajors) = getLabeledShown(deathsDailyData)
   for major in shownDeathsMajors:
     smoothPlot(axs[1], deathsData[major], deathsDailyData[major], major, major in labeledDeathsMajors, True, True)
   axs[1].set_title("Deaths")
