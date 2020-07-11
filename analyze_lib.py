@@ -121,14 +121,14 @@ def showData(CSC, confirmedData, deathsData, data_date, data_secs):
     max_length = max(max_length, max(len(confirmedData[major]), len(deathsData[major])))
  
   for major in shownConfirmedMajors:
-    smoothPlot(axs[0], confirmedData[major], confirmedDailyData[major], major, major in labeledConfirmedMajors, True, True)
+    smoothPlot(axs[0], range(max_length-len(confirmedDailyData[major]), max_length), confirmedDailyData[major], major, major in labeledConfirmedMajors, False, False)
   axs[0].set_title("Confirmed")
   axs[0].legend(loc='best')
 
   deathsDailyData = getSlopeData(deathsData, False, 7)
   (labeledDeathsMajors, shownDeathsMajors) = getLabeledShown(deathsDailyData)
   for major in shownDeathsMajors:
-    smoothPlot(axs[1], deathsData[major], deathsDailyData[major], major, major in labeledDeathsMajors, True, True)
+    smoothPlot(axs[1], range(max_length-len(deathsDailyData[major]), max_length), deathsDailyData[major], major, major in labeledDeathsMajors, False, False)
   axs[1].set_title("Deaths")
   axs[1].legend(loc='best')
 
